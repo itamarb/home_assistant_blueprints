@@ -1,0 +1,114 @@
+blueprint:
+  name: device state based on consumption (Tuya)
+  description: Used when the consumption metering is an entity's attribute.
+  domain: automation
+  input:
+    consumption_entity:
+      name: Socket entity.
+      description: The power metering socket that is used
+      selector:
+        entity:
+    duration:
+      name: Duration of consumption state (seconds)
+      description: Time in seconds to measure consumption before triggering the event.
+      default: 15
+      selector:
+        number:
+          min: 0
+          max: 300
+          unit_of_measurement: seconds
+    helper_entity:
+      name: Helper entity
+      description: Boolean helper (toggle) that will be used to show the state of the device connected to the power metering entity (the helper can be configured with other automations to actually turn on/off the device with IR/RF commands)
+      selector:
+        entity:
+    power_threshold:
+      name: Power threshold
+      description: Consumption rate that suggests the device is either on or off
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: W
+    device_on_automation:
+      name: Device on automation
+      description: The automation that turns on the device
+      selector:
+        entity:
+          domain: automation
+    device_off_automation:
+      name: Device off automation
+      description: The automation that turns the device off
+      selector:
+        entity:
+          domain: automation
+mode: single
+
+variables:
+  consumption_entity: !input consumption_entity
+  duration: !input duration
+  helper_entity: !input helper_entity
+  power_threshold: !input power_threshold
+  device_on_automation: !input device_on_automation
+  device_off_automation: !input device_off_automation
+
+trigger:
+  - platform: numeric_state
+    entity_id: !input consumption_entity
+    for: !input duration
+    above: !input power_threshold
+    attribute: current_consumption
+  - platform: numeric_state
+    entity_id: !input consumption_entity
+    for: !input duration
+    below: !input power_threshold
+    attribute: current_consumption
+
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input consumption_entity
+            attribute: current_consumption
+            above: !input power_threshold
+        sequence:
+          - service: automation.turn_off
+            target:
+              entity_id: !input device_on_automation
+          - wait_template: ''
+            timeout: '00:00:03'
+            continue_on_timeout: true
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input helper_entity
+          - wait_template: ''
+            timeout: '00:00:03'
+            continue_on_timeout: true
+          - service: automation.turn_on
+            target:
+              entity_id: !input device_on_automation
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input consumption_entity
+            attribute: current_consumption
+            below: !input power_threshold
+        sequence:
+          - service: automation.turn_off
+            target:
+              entity_id: !input device_off_automation
+          - wait_template: ''
+            timeout: '00:00:03'
+            continue_on_timeout: true
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input helper_entity
+          - wait_template: ''
+            timeout: '00:00:03'
+            continue_on_timeout: true
+          - service: automation.turn_on
+            target:
+              entity_id: !input device_off_automation
+    default: []
