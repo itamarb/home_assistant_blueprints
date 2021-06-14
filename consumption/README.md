@@ -8,4 +8,6 @@ Blueprint to set the state of a device which needs to be turned off or on by IR/
   b. If using Shelly 1pm, the consumption is a different entity, please see this blueprint.
 2. IR/RF universal remote (i.e: Broadlink) - https://www.home-assistant.io/integrations/broadlink/ with a configured switch to control the device connected to the power metering socket
 3. input_boolean helper for the state of the device
-4. An automations to trigger the on/off IR/RF command upon hepler state change - 
+4. An automations to trigger the on/off IR/RF command upon hepler state change - you can use this blueprint - https://github.com/itamarb/home_assistant_blueprints/blob/main/broadlink/send_on_off_IR_commands.yaml
+
+
