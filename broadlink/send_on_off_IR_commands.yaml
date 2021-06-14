@@ -5,7 +5,7 @@ blueprint:
   input:
     helper_entity:
       name: Helper entity
-      description: The helper toggel entity that would control the on/off send commands based on state
+      description: The helper toggle entity that would control the on/off send commands based on state
       selector:
         entity:
     remote_entity:
