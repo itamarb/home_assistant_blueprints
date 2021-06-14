@@ -4,7 +4,7 @@ blueprint:
   domain: automation
   input:
     consumption_entity:
-      name: Socket entity.
+      name: Socket entity
       description: The power metering socket that is used
       selector:
         entity:
