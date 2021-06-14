@@ -1,0 +1,58 @@
+blueprint:
+  name: Turn on device with broadlink
+  description: Turn on an IR/RF device by sending a broadlink remote.send_command. Prequisite - run the remoet.learn_command in order to have the option to send it
+  domain: automation
+  input:
+    helper_entity:
+      name: Helper entity
+      description: The helper toggel entity that would control the on/off send commands based on state
+      selector:
+        entity:
+    remote_entity:
+      name: Broadlink remote
+      description: The remote entity created with the Broadlink integration that controls the desired device
+      selector:
+        entity:
+          domain: remote
+    device:
+      name: Broadlink device
+      description: The device name controlled by the Broadlink remote (configured when running the remote.learn_command)
+    command_on:
+      name: Command to turn on IR/RF device
+    command_off:
+      name: Command to turn off IR/RF device
+
+mode: single
+
+trigger:
+  - platform: state
+    entity_id: !input helper_entity
+    to: 'on'
+  - platform: state
+    entity_id: !input helper_entity
+    to: 'off'
+condition: []
+
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input helper_entity
+            state: 'on'
+          - service: remote.send_command
+            data:
+              entity_id: !input remote_entity
+              device: !input device
+              command: !input command_on
+        sequence: []
+      - conditions:
+          - condition: state
+            entity_id: !input helper_entity
+            state: 'off'
+        sequence:
+          - service: remote.send_command
+            data:
+              entity_id: !input remote_entity
+              device: !input device
+              command: !input command_off
+    default: []
