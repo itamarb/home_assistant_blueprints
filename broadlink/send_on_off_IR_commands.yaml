@@ -1,5 +1,5 @@
 blueprint:
-  name: Turn on device with broadlink
+  name: Turn device on/off with broadlink
   description: Turn on an IR/RF device by sending a broadlink remote.send_command. Prequisite - run the remoet.learn_command in order to have the option to send it
   domain: automation
   input:
