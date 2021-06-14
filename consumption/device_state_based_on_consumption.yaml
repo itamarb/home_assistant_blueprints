@@ -31,19 +31,13 @@ blueprint:
           min: 0
           max: 100
           unit_of_measurement: W
-    device_on_automation:
+    device_toggle_automation:
       name: Device on automation
       description: The automation that turns on the device
       selector:
         entity:
           domain: automation
-    device_off_automation:
-      name: Device off automation
-      description: The automation that turns the device off
-      selector:
-        entity:
-          domain: automation
-mode: single
+    mode: single
 
 variables:
   consumption_entity: !input consumption_entity
@@ -77,7 +71,7 @@ action:
         sequence:
           - service: automation.turn_off
             target:
-              entity_id: !input device_on_automation
+              entity_id: !input device_toggle_automation
           - wait_template: ''
             timeout: '00:00:03'
             continue_on_timeout: true
@@ -89,7 +83,7 @@ action:
             continue_on_timeout: true
           - service: automation.turn_on
             target:
-              entity_id: !input device_on_automation
+              entity_id: !input device_toggle_automation
       - conditions:
           - condition: numeric_state
             entity_id: !input consumption_entity
@@ -98,7 +92,7 @@ action:
         sequence:
           - service: automation.turn_off
             target:
-              entity_id: !input device_off_automation
+              entity_id: !input device_toggle_automation
           - wait_template: ''
             timeout: '00:00:03'
             continue_on_timeout: true
@@ -110,5 +104,5 @@ action:
             continue_on_timeout: true
           - service: automation.turn_on
             target:
-              entity_id: !input device_off_automation
+              entity_id: !input device_toggle_automation
     default: []
