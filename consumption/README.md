@@ -1,6 +1,6 @@
 # Device state based on consumption
 
-Blueprint to set the state of a device which needs to be turned off or on by IR/RF and not by powering down the socket i.e: AC or TV.
+Blueprint for setting the status of a device that must be turned off or on using IR/RF rather than shutting down the socket, such as an AC or television.
 
 **Prequisists: **
 1. Power metering device
